@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<memcache   memcacheip="10.0.102.30" memcacheport="11211"/>
+</config>

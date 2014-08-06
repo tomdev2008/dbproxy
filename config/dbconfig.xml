@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<master>
+		<dbserver   dbserverip="10.0.102.30" dbserverport="3306" user="root" password="" dbname="vdc_user"/>
+	</master>
+	<slave>	
+		<rddbserver   dbserverip="10.0.102.30" dbserverport="3306" user="root" password="" dbname="vdc_user"/>
+	</slave>
+</config>
