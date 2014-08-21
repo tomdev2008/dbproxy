@@ -15,6 +15,8 @@ int32_t QueryRoleBaseInfo(const RoleID roleid, RoleBaseInfo& rolebaseinfo)
 	char szSql[enmMaxSqlStringLength] = {0};
 	sprintf(szSql, "select `RoleID`,"
 			"`RoleName`,"
+			"`AccountName`,"
+			"`AccountID`,"
 			"`Gender`,"
 			"`UserLevel`,"
 			"`VipLevel`,"
@@ -109,6 +111,8 @@ int32_t QueryRoleBaseInfo(const RoleID roleid, RoleBaseInfo& rolebaseinfo)
 
 	rolebaseinfo.nRoleID = (RoleID)atoi(arrRecordSet[enmUserBaseInfo_RoleID]);
 	strcpy_safe(rolebaseinfo.szRoleName, enmMaxRoleNameLength, arrRecordSet[enmUserBaseInfo_RoleName], strlen(arrRecordSet[enmUserBaseInfo_RoleName]));
+	strcpy_safe(rolebaseinfo.szAccountName, MaxAccountName, arrRecordSet[enmUserBaseInfo_AccountName], strlen(arrRecordSet[enmUserBaseInfo_AccountName]));
+	rolebaseinfo.nAccountID = (AccountID)atoi(arrRecordSet[enmUserBaseInfo_AccountID]);
 	rolebaseinfo.ucGender = (Gender)atoi(arrRecordSet[enmUserBaseInfo_Gender]);
 	rolebaseinfo.ucUserLevel = (UserLevel)atoi(arrRecordSet[enmUserBaseInfo_UserLevel]);
 	rolebaseinfo.ucVipLevel = (VipLevel)atoi(arrRecordSet[enmUserBaseInfo_VipLevel]);

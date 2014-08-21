@@ -139,15 +139,16 @@ int32_t CFromRoomGetEvent::ProcessRoomGetRoleInfo(const CRoomGetRoleInfoReq& req
 	respbody.nIdentityType = rolebaseinfo.uIdentity;
 	respbody.strRoleName = rolebaseinfo.szRoleName;
 	respbody.nLoginTimes = rolebaseinfo.nLoginTimes;
+	respbody.nAccountID = rolebaseinfo.nAccountID;
 
-	//查询用户账户表，得到其179id
-	ret = QueryRole179ID(reqbody.nRoleID, respbody.nAccountID);
-	if(0 > ret)
-	{
-		WRITE_ERROR_LOG( "query role 179id from user_account failed! roleid=%d, errorcode=0x%08X \n",
-				reqbody.nRoleID, ret);
-		return ret;
-	}
+//	//查询用户账户表，得到其179id
+//	ret = QueryRole179ID(reqbody.nRoleID, respbody.nAccountID);
+//	if(0 > ret)
+//	{
+//		WRITE_ERROR_LOG( "query role 179id from user_account failed! roleid=%d, errorcode=0x%08X \n",
+//				reqbody.nRoleID, ret);
+//		return ret;
+//	}
 	//WRITE_DEBUG_LOG( "query role 179id  from user_account success! roleid=%d \n",reqbody.nRoleID);
 
 	//查询在线时间总表，获得nOnlineTime字段
@@ -200,11 +201,11 @@ int32_t CFromRoomGetEvent::ProcessRoomGetRoleInfo(const CRoomGetRoleInfoReq& req
 	respbody.nRoomCount = (uint16_t)admcount;
 	//查询玩家收藏房间信息
 	int32_t cllcount = 0;
-	ret = QueryRolecollection(reqbody.nRoleID, cllcount, respbody.arrCollectRoomList, MaxCollectCount);
-	if(0 > ret)
-	{
-		return ret;
-	}
+//	ret = QueryRolecollection(reqbody.nRoleID, cllcount, respbody.arrCollectRoomList, MaxCollectCount);
+//	if(0 > ret)
+//	{
+//		return ret;
+//	}
 	respbody.nCollectCount = cllcount;
 	return S_OK;
 }

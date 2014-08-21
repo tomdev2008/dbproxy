@@ -122,16 +122,16 @@ AccountID CFromHallGetEvent::GetNormalAccount()
 	return nAccountID;
 }
 
-bool CFromHallGetEvent::AddUserBaseInfo(const char *szAccountName, AccountID nAccountID, RoleID nRoleID, int32_t nOSVersion,
+bool CFromHallGetEvent::AddUserBaseInfo(const char *szAccountName, AccountID nAccountID, RoleID nRoleID, VipLevel nVipLevel, int32_t nOSVersion,
 		const char *szMacAddr, const char *szRegIP)
 {
 	char szSql[enmMaxSqlStringLength] = {0};
 	char arrTime[64] = {0};
 	CDateTime::CurrentDateTime().ToDateTimeString(arrTime);
 
-	sprintf(szSql, "insert into vdc_user.user_base_info(`RoleID`, `RoleName`,`AccountName`, `AccountID`, `CreateTime`, "
-			"`OSVersion`, `MacAddr`, `RegIP`) values (%d, '%s', '%s', %d, '%s', %d, '%s', '%s')", nRoleID, szAccountName,
-			szAccountName, nAccountID, arrTime, nOSVersion, szMacAddr, szRegIP);
+	sprintf(szSql, "insert into vdc_user.user_base_info(`RoleID`, `RoleName`,`AccountName`, `AccountID`, `VipLevel`, `CreateTime`, "
+			"`OSVersion`, `MacAddr`, `RegIP`) values (%d, '%s', '%s', %d, %d, '%s', %d, '%s', '%s')", nRoleID, szAccountName,
+			szAccountName, nAccountID, nVipLevel, arrTime, nOSVersion, szMacAddr, szRegIP);
 
 	uint64_t nAffectedRows = 0;
 	int32_t nRet = MYSQLREADENGINE.ExecuteUpdate(szSql, nAffectedRows);
@@ -200,16 +200,17 @@ int32_t CFromHallGetEvent::ProcessHallLoginGetRolebaseinfoReq(const CHallGetRole
 				return 0;
 			}
 
-			if(!AddUserBaseInfo(reqbody->strAccountName.GetString(), nAccountID, reqbody->nRoleID, reqbody->nOSVersion,
+			rolebaseinfo.ucVipLevel = enmVipLevel_Regist;
+			rolebaseinfo.nAccountID = nAccountID;
+			strncpy(rolebaseinfo.szAccountName, reqbody->strAccountName.GetString(), reqbody->strAccountName.GetStringLength());
+			strncpy(rolebaseinfo.szRoleName, rolebaseinfo.szAccountName, strlen(rolebaseinfo.szAccountName));
+
+			if(!AddUserBaseInfo(reqbody->strAccountName.GetString(), nAccountID, reqbody->nRoleID, rolebaseinfo.ucVipLevel, reqbody->nOSVersion,
 					reqbody->strMacAddr.GetString(), inet_ntoa_f(reqbody->nIpAddr)))
 			{
 				WRITE_ERROR_LOG("add user base info failed!{accountname=%s, roleid=%d}\n", reqbody->strAccountName.GetString(), reqbody->nRoleID);
 				return 0;
 			}
-
-			rolebaseinfo.nAccountID = nAccountID;
-			strncpy(rolebaseinfo.szAccountName, reqbody->strAccountName.GetString(), reqbody->strAccountName.GetStringLength());
-			strncpy(rolebaseinfo.szRoleName, rolebaseinfo.szAccountName, strlen(rolebaseinfo.szAccountName));
 		}
 
 		ret = CVDCUserBaseInfo::VDCUserBaseInfoEncode((uint8_t *)szVal, enmMaxMemcacheValueLen, offset, rolebaseinfo);

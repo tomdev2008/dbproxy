@@ -309,6 +309,71 @@ int32_t CFromHallSetEvent::OnMessage_SetLoginInfo(MessageHeadSS * pMsgHead, IMsg
 		WRITE_ERROR_LOG( "update player login channel failed! roleid=%d, errorcode=0x%08X\n",pTmpBody->nRoleID, pTmpBody->nChannel);
 		return ret;
 	}
+	//玩家基本信息结构
+	RoleBaseInfo rolebaseinfo;
+	CVDCUserBaseInfo::VDCUserBaseInfoInit(rolebaseinfo);
+
+	//写缓存必须的参数声明
+	char szKey[enmMaxMemcacheKeyLen] = {0};
+	size_t keylen = 0;
+	//	char szVal[enmMaxMemcacheValueLen] = {0};
+	char* pVal = NULL;
+	size_t vallen = 0;
+
+	CVDCMemcache& cacheobj = GET_VDCMEMCACHE_INSTANCE();
+
+	//获取key值
+	GenerateMemcacheKey(szKey, enmMaxMemcacheKeyLen, keylen, enmStoreType_RoleID, pTmpBody->nRoleID);
+
+	//首先查找cache中是否存在
+	ret = cacheobj.MemcacheIfKeyExist(cacheobj.m_memc, szKey, keylen );
+	if(ret >= 0)
+	{
+		//取出缓存信息并更新
+		ret = cacheobj.MemcacheGet(cacheobj.m_memc, szKey, keylen, pVal, vallen );
+		if(0 > ret)
+		{
+			WRITE_ERROR_LOG( "this role is exists in cache, but fetch it from cache failed! roleid=%d, errorcode=0x%08X \n",
+					pTmpBody->nRoleID, ret );
+			return ret;
+		}
+		WRITE_DEBUG_LOG( "this role is exist in cache, fetch it success! key=%s \n", szKey );
+
+		offset = 0;
+		ret = CVDCUserBaseInfo::VDCUserBaseInfoDecode((uint8_t *)pVal, enmMaxMemcacheValueLen, offset, rolebaseinfo);
+		if(0 > ret)
+		{
+			WRITE_ERROR_LOG( "decode role base info get from cache failed! roleid=%d, errorcode=0x%08X ",
+					pTmpBody->nRoleID, ret );
+			return ret;
+		}
+		WRITE_DEBUG_LOG( "decode role base info get from cache success! roleid=%d \n",
+				pTmpBody->nRoleID );
+
+		rolebaseinfo.nRoleID = pTmpBody->nRoleID;
+		strcpy(rolebaseinfo.szLastLoginIP , rolebaseinfo.szLoginIP);
+		strcpy(rolebaseinfo.szLoginIP, szLoginIP);
+		rolebaseinfo.nLastLoginTime = pTmpBody->nLoginTime;
+		rolebaseinfo.nLoginTimes += 1;
+	}
+	else
+	{
+		//获取用户基本信息
+		ret = QueryRoleBaseInfo(pTmpBody->nRoleID, rolebaseinfo);
+		if(0 > ret)
+		{
+			WRITE_ERROR_LOG( "query player base info failed! errorcode=0x%08X, roleid=%d\n",
+					ret, pTmpBody->nRoleID);
+			return ret;
+		}
+		//WRITE_DEBUG_LOG( "query player base info success! roleid=%d\n", pTmpBody->nRoleID);
+
+		rolebaseinfo.nRoleID = pTmpBody->nRoleID;
+
+	}
+
+	UpdateMemcache(rolebaseinfo);
+
 	//WRITE_DEBUG_LOG( "update player login channel success! roleid=%d\n", pTmpBody->nRoleID);
 
 	//	//查询基本信息
@@ -800,18 +865,18 @@ void CFromHallSetEvent::UpdateMemcache(RoleBaseInfo& rolebaseinfo)
 		return;
 	}
 
-	//清除web缓存,避免不同步
-	memset(szKey, 0, sizeof(szKey));
-	keylen = 0;
-	GenerateMemcacheKeyForWeb(szKey, enmMaxMemcacheKeyLen, keylen, enmStoreType_RoleID, rolebaseinfo.nRoleID);
-	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szKey, keylen, 0);
-	if(0 > ret)
-	{
-		WRITE_ERROR_LOG( "delete memcache information for web failed! errorcode=0x%08X, key=%s, keylen=%d\n",
-				ret, szKey, keylen);
-		return;
-	}
-	WRITE_DEBUG_LOG( "delete memcache information for web success! key=%s, keylen=%d\n",szKey, keylen);
+//	//清除web缓存,避免不同步
+//	memset(szKey, 0, sizeof(szKey));
+//	keylen = 0;
+//	GenerateMemcacheKeyForWeb(szKey, enmMaxMemcacheKeyLen, keylen, enmStoreType_RoleID, rolebaseinfo.nRoleID);
+//	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szKey, keylen, 0);
+//	if(0 > ret)
+//	{
+//		WRITE_ERROR_LOG( "delete memcache information for web failed! errorcode=0x%08X, key=%s, keylen=%d\n",
+//				ret, szKey, keylen);
+//		return;
+//	}
+//	WRITE_DEBUG_LOG( "delete memcache information for web success! key=%s, keylen=%d\n",szKey, keylen);
 }
 
 FRAME_DBPROXY_NAMESPACE_END

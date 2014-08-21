@@ -57,7 +57,7 @@ public:
 
 private:
 	AccountID GetNormalAccount();
-	bool AddUserBaseInfo(const char *szAccountName, AccountID nAccountID, RoleID nRoleID, int32_t nOSVersion, const char *szMacAddr, const char *szRegIP);
+	bool AddUserBaseInfo(const char *szAccountName, AccountID nAccountID, RoleID nRoleID, VipLevel nVipLevel, int32_t nOSVersion, const char *szMacAddr, const char *szRegIP);
 };
 
 #define	CREATE_FROM_HALLGET_EVENT_INSTANCE	        CSingleton<CFromHallGetEvent>::CreateInstance

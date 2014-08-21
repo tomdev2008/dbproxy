@@ -156,17 +156,17 @@ int32_t CFromPublicUpdateEvent::ProcessPubUpAssetReq(const CUpdateAssetReq& reqb
 			billEngine.WriteUpdateAssetBill(reqbody.strTransID.GetString(), reqbody.nRoleID, reqbody.nCauseID, szDateTime, reqbody.arrAssetValue[i], nLeftMoney);
 		}
 	}
-	//删除网站的cache信息: 首先生成web那边的key的格式，然后删除之
-	GenerateMemcacheKeyForWeb(szKey, enmMaxMemcacheKeyLen, keylen, enmStoreType_RoleID, reqbody.nRoleID);
-	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szKey, keylen, 0);
-	if(0 > ret)
-	{
-		WRITE_ERROR_LOG( "memcache delete failed! errorcode=0x%08X, key=%s, keylen=%d\n",
-				ret,
-				szKey,
-				keylen);
-		return ret;
-	}
+//	//删除网站的cache信息: 首先生成web那边的key的格式，然后删除之
+//	GenerateMemcacheKeyForWeb(szKey, enmMaxMemcacheKeyLen, keylen, enmStoreType_RoleID, reqbody.nRoleID);
+//	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szKey, keylen, 0);
+//	if(0 > ret)
+//	{
+//		WRITE_ERROR_LOG( "memcache delete failed! errorcode=0x%08X, key=%s, keylen=%d\n",
+//				ret,
+//				szKey,
+//				keylen);
+//		return ret;
+//	}
 //	WRITE_DEBUG_LOG( "memcache delete success! key=%s, keylen=%d\n",
 //			szKey,
 //			keylen);

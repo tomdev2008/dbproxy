@@ -106,6 +106,8 @@ enum
 {
 	enmUserBaseInfo_RoleID           = 0,
 	enmUserBaseInfo_RoleName,
+	enmUserBaseInfo_AccountName,
+	enmUserBaseInfo_AccountID,
 	enmUserBaseInfo_Gender,
 	enmUserBaseInfo_UserLevel,
 	enmUserBaseInfo_VipLevel,

@@ -832,7 +832,7 @@ int32_t CFromSysinfoGetEvent::OnMessage_getVipInfo(MessageHeadSS * pMsgHead, IMs
 }
 int32_t CFromSysinfoGetEvent::QueryUserVipInfo(uint32_t& vipplayercount, SingleRoleInfo arrVipPlayerInfo[], const CGetVipRoleReq& reqbody)
 {
-	if(enmVipLevel_RED > reqbody.nVipLevel)
+	if(enmVipLevel_Gold > reqbody.nVipLevel)
 	{
 		WRITE_WARNING_LOG( "warning: argument viplevel on get vip role request is invalid! viplevel=%d\n", reqbody.nVipLevel);
 		vipplayercount = 0;

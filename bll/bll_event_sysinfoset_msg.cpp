@@ -163,7 +163,7 @@ int32_t CFromSysinfoSetEvent::QueryTimeOutPurpleVip(RoleID arrRoleID[], int32_t&
 
 	char szSql[enmMaxSqlStringLength] = {0};
 	sprintf(szSql, "select `RoleID` from vdc_user.user_base_info where (`VipLevel`=%d or `VipLevel`=%d) and `ExpireVipTime`>%d and `ExpireVipTime`<%d",
-			(int32_t)enmVipLevel_PURPLE, (int32_t)enmVipLevel_RED, 0, (int32_t)dt.Seconds());
+			(int32_t)enmVipLevel_Diamond, (int32_t)enmVipLevel_Gold, 0, (int32_t)dt.Seconds());
 
 	uint32_t nFieldCount = 0;
 	uint32_t nRowCount = 0;
@@ -207,7 +207,7 @@ int32_t CFromSysinfoSetEvent::UpdateTimeOutPurpleVipLevel(const RoleID roleid)
 {
 	int32_t ret = S_OK;
 	char szSql[enmMaxSqlStringLength] = {0};
-	sprintf(szSql, "update vdc_user.user_base_info set `VipLevel`=%d  where `RoleID`=%d", enmVipLevel_REGISTER, roleid);
+	sprintf(szSql, "update vdc_user.user_base_info set `VipLevel`=%d  where `RoleID`=%d", enmVipLevel_Regist, roleid);
 
 	uint64_t nAffectedRows = 0;
 	ret = MYSQLREADENGINE.ExecuteUpdate(szSql, nAffectedRows);
@@ -269,7 +269,7 @@ int32_t CFromSysinfoSetEvent::ProcessSysDegrade(const CDegradeReq& reqbody, CDeg
 	int32_t ret = S_OK;
 
 	//修改数据库： user_base_info表中的viplevel字段
-	ret = DegradeUserVipLevel(reqbody.nRoleID, enmVipLevel_REGISTER);
+	ret = DegradeUserVipLevel(reqbody.nRoleID, enmVipLevel_Regist);
 	if(0 > ret)
 	{
 		WRITE_ERROR_LOG( "degrade user vip level failed! errorcode=0x%08X, roleid=%d\n",
@@ -293,17 +293,17 @@ int32_t CFromSysinfoSetEvent::ProcessSysDegrade(const CDegradeReq& reqbody, CDeg
 	//用户基本信息结构声明
 	RoleBaseInfo rolebaseinfo;
 
-	//删掉web缓存: 感觉这里是多此一举，因为调用memcache_set的时候，如果key已经存在，则会覆盖，因此，这个地方不需要删除
-	GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, reqbody.nRoleID);
-	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
-	if(0 > ret)
-	{
-		WRITE_ERROR_LOG( "delete memcache failed! errorcode=0x%08X, memcachekey=%s, keylen=%d\n",
-				ret,
-				szWebKey,
-				nWebKeyLen);
-		return ret;
-	}
+//	//删掉web缓存: 感觉这里是多此一举，因为调用memcache_set的时候，如果key已经存在，则会覆盖，因此，这个地方不需要删除
+//	GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, reqbody.nRoleID);
+//	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
+//	if(0 > ret)
+//	{
+//		WRITE_ERROR_LOG( "delete memcache failed! errorcode=0x%08X, memcachekey=%s, keylen=%d\n",
+//				ret,
+//				szWebKey,
+//				nWebKeyLen);
+//		return ret;
+//	}
 	//WRITE_DEBUG_LOG( "delete memcache success! memcachekey=%s, keylen=%d\n",szWebKey,nWebKeyLen);
 
 	//从数据库中获取该玩家基本信息
@@ -507,17 +507,17 @@ int32_t CFromSysinfoSetEvent::ProcessSysGroupDegrade(const CGroupDegradeReq& req
 		}
 		//WRITE_DEBUG_LOG( "degrade user viplevel success! roleid=%d\n",reqbody.arrRoleID[i]);
 
-		//将该玩家从缓存中删除（web格式的缓存）
-		memset(szWebKey, 0, sizeof(szWebKey));
-		GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, reqbody.arrRoleID[i]);
-		ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
-		if(0 > ret)
-		{
-			WRITE_ERROR_LOG( "delete web memcache failed! webkey=%s, webkeylen=%d, errorcode=0x%08X\n",
-					szWebKey, nWebKeyLen, ret);
-			nFailedCount ++;
-			continue;
-		}
+//		//将该玩家从缓存中删除（web格式的缓存）
+//		memset(szWebKey, 0, sizeof(szWebKey));
+//		GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, reqbody.arrRoleID[i]);
+//		ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
+//		if(0 > ret)
+//		{
+//			WRITE_ERROR_LOG( "delete web memcache failed! webkey=%s, webkeylen=%d, errorcode=0x%08X\n",
+//					szWebKey, nWebKeyLen, ret);
+//			nFailedCount ++;
+//			continue;
+//		}
 		//WRITE_DEBUG_LOG( "delete web memcache success! webkey=%s, webkeylen=%d\n",szWebKey,nWebKeyLen);
 
 		//从数据库中查询该玩家的基本信息

@@ -408,17 +408,17 @@ int32_t CFromTaskserverEvent::OnMessage_UpdateAsset(MessageHeadSS * pMsgHead, IM
 	//用户基本信息结构声明
 	RoleBaseInfo rolebaseinfo;
 
-	//删掉web缓存
-	GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, pTmpBody->nRoleID);
-	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
-	if(0 > ret)
-	{
-		WRITE_ERROR_LOG( "delete memcache failed! errorcode=0x%08X, memcachekey=%s, keylen=%d\n",
-				ret,
-				szWebKey,
-				nWebKeyLen);
-		return ret;
-	}
+//	//删掉web缓存
+//	GenerateMemcacheKeyForWeb(szWebKey, enmMaxMemcacheKeyLen, nWebKeyLen, enmStoreType_RoleID, pTmpBody->nRoleID);
+//	ret = cacheobj.MemcacheDel(cacheobj.m_memc, szWebKey, nWebKeyLen, 0);
+//	if(0 > ret)
+//	{
+//		WRITE_ERROR_LOG( "delete memcache failed! errorcode=0x%08X, memcachekey=%s, keylen=%d\n",
+//				ret,
+//				szWebKey,
+//				nWebKeyLen);
+//		return ret;
+//	}
 	//WRITE_DEBUG_LOG( "delete memcache success! memcachekey=%s, keylen=%d\n",szWebKey,nWebKeyLen);
 
 	//从数据库中获取该玩家基本信息

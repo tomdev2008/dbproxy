@@ -127,7 +127,7 @@ void CMainFrame::RegistMsg()
 	RegistMsgHandler(MSGID_HSDB_GETROOM_ADMIN_COUNT_REQ, &GET_FROM_HALLGET_EVENT_INSTANCE(), static_cast<SS_MSG_PROC>(&CFromHallGetEvent::OnMessage_HallGetRoomAdmcount));
 	RegistMsgHandler(MSGID_HSDB_GETROOMINFO_REQ, &GET_FROM_HALLGET_EVENT_INSTANCE(), static_cast<SS_MSG_PROC>(&CFromHallGetEvent::OnMessage_HallGetRoomInfo));
 
-	RegistMsgHandler(MSGID_HSTA_ONLINE_NOTI, &GET_FROM_HALLSET_EVENT_INSTANCE(),static_cast<SS_MSG_PROC>(&CFromHallSetEvent::OnMessage_OnlineNotice));
+	//RegistMsgHandler(MSGID_HSTA_ONLINE_NOTI, &GET_FROM_HALLSET_EVENT_INSTANCE(),static_cast<SS_MSG_PROC>(&CFromHallSetEvent::OnMessage_OnlineNotice));
 	RegistMsgHandler(MSGID_HSDB_SETLOGININFO_NOTI, &GET_FROM_HALLSET_EVENT_INSTANCE(),static_cast<SS_MSG_PROC>(&CFromHallSetEvent::OnMessage_SetLoginInfo));
 	RegistMsgHandler(MSGID_HSDB_SETLOGOUTINFO_NOTI, &GET_FROM_HALLSET_EVENT_INSTANCE(),static_cast<SS_MSG_PROC>(&CFromHallSetEvent::OnMessage_SetLogoutInfo));
 	RegistMsgHandler(MSGID_HSDB_SET_TITLE_REQ, &GET_FROM_HALLSET_EVENT_INSTANCE(),static_cast<SS_MSG_PROC>(&CFromHallSetEvent::OnMessage_SetRoleRank));
