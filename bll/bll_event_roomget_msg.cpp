@@ -201,11 +201,11 @@ int32_t CFromRoomGetEvent::ProcessRoomGetRoleInfo(const CRoomGetRoleInfoReq& req
 	respbody.nRoomCount = (uint16_t)admcount;
 	//查询玩家收藏房间信息
 	int32_t cllcount = 0;
-//	ret = QueryRolecollection(reqbody.nRoleID, cllcount, respbody.arrCollectRoomList, MaxCollectCount);
-//	if(0 > ret)
-//	{
-//		return ret;
-//	}
+	ret = QueryRolecollection(reqbody.nRoleID, cllcount, respbody.arrCollectRoomList, MaxCollectCount);
+	if(0 > ret)
+	{
+		return ret;
+	}
 	respbody.nCollectCount = cllcount;
 	return S_OK;
 }
